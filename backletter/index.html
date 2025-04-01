@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给宇洁的信</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a1a;
+            color: #e0e0ff;
+            overflow-x: hidden;
+            height: 100vh;
+            perspective: 1000px;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        /* 信封样式 */
+        .envelope {
+            position: relative;
+            width: 90%;
+            max-width: 400px;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a3a, #0a0a2a);
+            border-radius: 5px;
+            box-shadow: 0 10px 25px rgba(0, 0, 50, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.8s ease;
+            transform-style: preserve-3d;
+            z-index: 10;
+        }
+        
+        .envelope.open {
+            transform: rotateX(180deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-top: 120px solid #2a2a5a;
+            transform-origin: top;
+            transform: rotateX(0deg);
+            transition: all 0.8s ease;
+            z-index: 2;
+        }
+        
+        .envelope.open:before {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: visible;
+            background: linear-gradient(135deg, #1a1a3a, #0a0a2a);
+            border-radius: 5px;
+            z-index: 1;
+        }
+        
+        .recipient {
+            font-size: 24px;
+            font-weight: bold;
+            color: #a0a0ff;
+            text-shadow: 0 0 10px rgba(160, 160, 255, 0.5);
+            letter-spacing: 2px;
+            transform: translateY(-20px);
+            position: absolute;
+            z-index: 3;
+        }
+        
+        .stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(45deg, #3a3a7a, #2a2a6a);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e0e0ff;
+            font-size: 12px;
+            transform: rotate(10deg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+        }
+        
+        /* 信件内容 */
+        .letter {
+            position: absolute;
+            top: 0;
+            width: 90%;
+            max-width: 400px;
+            background: linear-gradient(135deg, #0a0a1a, #1a1a3a);
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 50, 0.5);
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: all 0.8s ease 0.4s;
+            z-index: 5;
+        }
+        
+        .letter.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .letter-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #3a3a7a;
+        }
+        
+        .letter-title {
+            font-size: 22px;
+            color: #a0a0ff;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .letter-date {
+            font-size: 14px;
+            color: #7a7aaf;
+        }
+        
+        .letter-content {
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        .letter-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .letter-image {
+            width: 100%;
+            margin: 15px 0;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .signature {
+            margin-top: 20px;
+            text-align: right;
+            font-style: italic;
+            color: #a0a0ff;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #e0e0ff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <div class="envelope" id="envelope">
+            <div class="recipient">宇洁 亲启</div>
+            <div class="stamp">LOVE</div>
+            <div class="envelope-front"></div>
+        </div>
+        
+        <div class="letter" id="letter">
+            <div class="letter-header">
+                <h1 class="letter-title">致我的宇洁</h1>
+                <div class="letter-date">2025年4月1日</div>
+            </div>
+            
+            <div class="letter-content">
+                <p>To 亲爱的洁：</p>
+                
+                
+                <p>很抱歉，今天才正式的回应你，今晚看完你的信，又看到那句“自始至终都认真地回应”，不由得羞愧地落下眼泪，我真的做到了吗？</p>
+                <p>很难想象，我们居然才认识了一个月。虽然认识你之后我感觉时间过得飞快，或许是太忙了吧，我还以为没过多久，当你和我表白的时候，说我们已经相遇26天，我才意识到，原来不知不觉中，我们之间已经发生了这么多事。</p>
+                <p>什么时候对你动心的呢，或许是首次的相见，那一股让人望而却步的高冷气质，或许是网上聊天时，梗密集度复杂的惺惺相惜，或许是听到你讲述观点，发现你的理念和我如此相像时，我迷上了你。你说，“缘，妙不可言”，我要说，“你就是上天赐予我的缘”。</p>
+                <p>你说你慢热，我说我不急，本身就比较忙碌，不能时时陪伴，也怕最初过多的嘘寒问暖和最后忙碌时形成的反差让你不适，没想到，你在我这么高强度的时间安排上说了一句，“晚上我来接你”，那一刻，我感觉这辈子都有了。</p>
+                <img src="https://pic.awa.ms/f/2025/04/01/67ebfa1b508b1.jpg" alt="情书" class="letter-image">
+                <p>你说我是文艺哥，我想在数学文化节写一个独属于你的情书，或许那时已经写下了我对你的承诺，漫漫人生，我愿与你相伴，永远，永远。</p>
+                <p>你说我是抽象哥，这是我们俩共同的特点，也是我们能跨越性别，在最初刚认识的时候就能自在交流的通道，我也没想到，当时只道是寻常。</p>
+                <p>你说我是暖哥，我做的并不到位，本身反应迟钝，没有女生的心思那么细腻，没能及时感受到你情绪的变化，这是我的问题，也是我要改进的。</p>
+                <p>再次说一次抱歉，因为我的过失，让本来愉快的交流以失望结尾，这封信，回给你，是我的道歉，亦是对你那份真挚情书的回应。我喜欢你，永远，永远喜欢你。</p>
+                
+                <div class="signature">
+                    <p>你的小六月</p>
+                    <p>2025年4月1日</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 创建星星背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // 随机大小
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // 随机位置
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // 随机闪烁延迟
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 信封点击事件
+        function setupEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const letter = document.getElementById('letter');
+            
+            envelope.addEventListener('click', function() {
+                envelope.classList.add('open');
+                setTimeout(() => {
+                    letter.classList.add('show');
+                }, 400);
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            setupEnvelope();
+        });
+    </script>
+</body>
+</html>
